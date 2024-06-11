@@ -3,7 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PlantDiseaseController;
-
+use App\Http\Controllers\Api\PlantDiseaseList;
+use App\Http\Controllers\Api\SuggestionController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,5 +19,12 @@ use App\Http\Controllers\Api\PlantDiseaseController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+//scan
 Route::post('/scan', [PlantDiseaseController::class, 'processScan']);
+
+//list Disease
+Route::get('/diseases', [PlantDiseaseList::class, 'index']);
+
+//suggestion
+Route::get('/suggestion', [SuggestionController::class, 'index']);
+Route::get('/suggestion/{diseaseSlug}', [SuggestionController::class, 'show']);

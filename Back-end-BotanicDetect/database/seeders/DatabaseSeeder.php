@@ -1,22 +1,34 @@
 <?php
 
 namespace Database\Seeders;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use App\Models\PlantDisease;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $diseases = [
+            ['name' => 'Tomato Leaf Mold', 'treatment' => 'Remove infected leaves, apply fungicide.'],
+            ['name' => 'Tomato healthy', 'treatment' => 'No treatment required.'],
+            ['name' => 'Apple Cedar apple rust', 'treatment' => 'Prune affected branches, apply fungicide.'],
+            ['name' => 'Apple healthy', 'treatment' => 'No treatment required.'],
+            ['name' => 'Grape healthy', 'treatment' => 'No treatment required.'],
+            ['name' => 'Grape Black rot', 'treatment' => 'Remove infected grapes, apply fungicide.'],
+            ['name' => 'Strawberry healthy', 'treatment' => 'No treatment required.'],
+            ['name' => 'Strawberry Leaf scorch', 'treatment' => 'Remove infected leaves, apply fungicide.'],
+            ['name' => 'Potato healthy', 'treatment' => 'No treatment required.'],
+            ['name' => 'Potato Late blight', 'treatment' => 'Remove infected leaves, apply fungicide.'],
+        ];
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        foreach ($diseases as $disease) {
+            PlantDisease::create([
+                'name' => $disease['name'],
+                'treatment' => $disease['treatment'],
+                'slug' => Str::slug($disease['name']),
+            ]);
+        }
     }
 }
+

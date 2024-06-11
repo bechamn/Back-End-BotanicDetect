@@ -4,14 +4,21 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Models\PlantDisease;
+use Illuminate\Support\Str;
 
 class PlantDiseaseController extends Controller
 {
-    public function processScan(Request $request)
+    /**
+     * Handle leaf scan and disease detection.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function scanLeaf(Request $request)
     {
-        // Validate the request
+        // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'leaf_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -24,14 +31,44 @@ class PlantDiseaseController extends Controller
         $imagePath = $request->file('leaf_image')->store('uploads', 'public');
 
         // Call your TensorFlow Lite model to process the image
-        $result = $this->analyzeImage($imagePath);
+        $detectedDisease = $this->analyzeImage($imagePath);
 
-        // Return the result as a JSON response
-        return response()->json($result);
+        if ($detectedDisease) {
+            // Check if the detected disease exists in the database
+            $disease = PlantDisease::where('slug', Str::slug($detectedDisease))->first();
+
+            if ($disease) {
+                // Return JSON response with detected disease
+                return response()->json([
+                    'success' => true,
+                    'disease' => $disease,
+                    'message' => 'Disease detected successfully.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Detected disease not found in the database.'
+                ], 404);
+            }
+        } else {
+            // If detection fails, return JSON response with error message
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to process the image. Please try again.'
+            ], 500);
+        }
     }
 
+    /**
+     * Function to analyze the image and detect disease.
+     *
+     * @param string $imagePath
+     * @return string|null Detected disease name or null if detection fails
+     */
     private function analyzeImage($imagePath)
     {
+        // Replace this with your actual detection logic
+        // Example: Assuming you have a DiseaseDetector service
         $pythonScriptPath = base_path('scripts/analyze_image.py'); // Path to your script
         $imageFullPath = storage_path('app/public/' . $imagePath);
 
@@ -40,8 +77,8 @@ class PlantDiseaseController extends Controller
 
         $result = json_decode($output, true);
 
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return $result;
+        if (json_last_error() === JSON_ERROR_NONE && isset($result['disease'])) {
+            return $result['disease'];
         }
 
         return [
@@ -49,3 +86,7 @@ class PlantDiseaseController extends Controller
         ];
     }
 }
+
+
+
+
