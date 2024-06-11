@@ -38,12 +38,8 @@ class PlantDiseaseController extends Controller
             $disease = PlantDisease::where('slug', Str::slug($detectedDisease))->first();
 
             if ($disease) {
-                // Return JSON response with detected disease
-                return response()->json([
-                    'success' => true,
-                    'disease' => $disease,
-                    'message' => 'Disease detected successfully.'
-                ]);
+                // Redirect to the suggestion page for the detected disease
+                return redirect()->route('suggestion.show', ['diseaseSlug' => $disease->slug]);
             } else {
                 return response()->json([
                     'success' => false,
@@ -81,12 +77,6 @@ class PlantDiseaseController extends Controller
             return $result['disease'];
         }
 
-        return [
-            'error' => 'Failed to process the image',
-        ];
+        return null;
     }
 }
-
-
-
-

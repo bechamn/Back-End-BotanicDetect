@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 //scan
-Route::post('/scan', [PlantDiseaseController::class, 'processScan']);
+Route::post('/scan-leaf', [PlantDiseaseController::class, 'scanLeaf'])->name('scan-leaf');
 
 //list Disease
 Route::get('/diseases', [PlantDiseaseList::class, 'index']);
