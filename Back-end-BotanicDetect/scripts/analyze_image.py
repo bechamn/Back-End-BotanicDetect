@@ -3,10 +3,9 @@ import json
 import numpy as np
 import tensorflow as tf
 from PIL import Image
+import os
 
 # Load the TensorFlow Lite model
-interpreter = tf.lite.Interpreter(model_path="scripts/tf_lite_Optimize_DEFAULT_model.tflite")
-interpreter.allocate_tensors()
 
 # Preprocess the input image
 def load_and_preprocess_image(image_path, target_size=(300, 300)):
@@ -34,6 +33,9 @@ def classify_image_tflite(interpreter, image_path, class_labels):
     return predicted_class, confidence
 
 if __name__ == '__main__':
+    interpreter = tf.lite.Interpreter(model_path="tf_lite_Optimize_DEFAULT_model.tflite")
+    interpreter.allocate_tensors()
+
     class_labels = [
         'Apple Apple scab',
         'Apple Black rot',

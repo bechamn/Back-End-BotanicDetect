@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PlantDisease;
 use Illuminate\Support\Str;
+// use App\Http\Controllers\Api\analyze_image;
+
 
 class PlantDiseaseController extends Controller
 {
@@ -65,11 +67,14 @@ class PlantDiseaseController extends Controller
     {
         // Replace this with your actual detection logic
         // Example: Assuming you have a DiseaseDetector service
-        $pythonScriptPath = base_path('scripts/analyze_image.py'); // Path to your script
+        $pythonScriptPath = base_path('app/Http/Controllers/Api/analyze_image.py'); // Path to your script
         $imageFullPath = storage_path('app/public/' . $imagePath);
 
-        $command = escapeshellcmd("python3 $pythonScriptPath $imageFullPath");
-        $output = shell_exec($command);
+        $escScriptPath = escapeshellarg($pythonScriptPath);
+        $escImageFullPath = escapeshellarg($imageFullPath);
+
+        // $command = escapeshellcmd("py $pythonScriptPath $imageFullPath");
+        $output = shell_exec("python {$escScriptPath} {$escImageFullPath}");
 
         $result = json_decode($output, true);
 
