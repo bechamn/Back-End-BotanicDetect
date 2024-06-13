@@ -34,14 +34,19 @@ class PlantDiseaseController extends Controller
 
         // Call your TensorFlow Lite model to process the image
         $detectedDisease = $this->analyzeImage($imagePath);
+        // return $detectedDisease;
 
         if ($detectedDisease) {
             // Check if the detected disease exists in the database
             $disease = PlantDisease::where('slug', Str::slug($detectedDisease))->first();
 
             if ($disease) {
-                // Redirect to the suggestion page for the detected disease
-                return redirect()->route('suggestion.show', ['diseaseSlug' => $disease->slug]);
+                // If disease exists, return JSON response with disease details
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Disease detected successfully.',
+                    'disease' => $disease
+                ]);
             } else {
                 return response()->json([
                     'success' => false,
@@ -78,8 +83,8 @@ class PlantDiseaseController extends Controller
 
         $result = json_decode($output, true);
 
-        if (json_last_error() === JSON_ERROR_NONE && isset($result['disease'])) {
-            return $result['disease'];
+        if (json_last_error() === JSON_ERROR_NONE && isset($result['predicted_class'])) {
+            return $result['predicted_class'];
         }
 
         return null;

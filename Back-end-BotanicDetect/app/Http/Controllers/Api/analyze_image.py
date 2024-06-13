@@ -97,4 +97,8 @@ if __name__ == '__main__':
     ]
     image_path = sys.argv[1]
     predicted_class, confidence = classify_image_tflite(interpreter, image_path, class_labels)
-    print(json.dumps(predicted_class))
+    result = {
+        "predicted_class": predicted_class,
+        "confidence": float(confidence)
+    }
+    print(json.dumps(result))
