@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\PlantDisease;
+use App\Models\Plant;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,4 +32,3 @@ class DatabaseSeeder extends Seeder
         }
     }
 }
-
