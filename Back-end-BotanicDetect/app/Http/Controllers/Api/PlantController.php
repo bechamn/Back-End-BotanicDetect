@@ -6,12 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Plant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class PlantController extends Controller
 {
     public function index()
     {
-        $plants = Plant::all();
+        // Get the current authenticated user's ID
+        $userId = Auth::id();
+    
+        // Retrieve plants based on the user_id
+        $plants = Plant::where('user_id', $userId)->get();
+    
+        // Return the plants as JSON response
         return response()->json($plants);
     }
 
@@ -36,6 +43,7 @@ class PlantController extends Controller
             'description' => $request->description,
             'diseases' => $request->diseases,
             'plantimages' => $imagesplant,
+            'user_id' => Auth::user()->id
         ]);
     
         return response()->json($plant, 201);
@@ -60,6 +68,11 @@ class PlantController extends Controller
 
         // Find the plant by ID
         $plant = Plant::findOrFail($id);
+
+        // Check if the authenticated user owns the plant
+        if (Auth::id() !== $plant->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         // Handle image upload
         if ($request->hasFile('plantimages')) {

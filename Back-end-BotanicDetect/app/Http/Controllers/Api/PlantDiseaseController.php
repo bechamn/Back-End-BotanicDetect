@@ -7,11 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PlantDisease;
 use Illuminate\Support\Str;
+use App\Models\History;
+use Illuminate\Support\Facades\Auth;
+
 // use App\Http\Controllers\Api\analyze_image;
 
 
 class PlantDiseaseController extends Controller
 {
+    public function indexdiseases()
+    {
+        $diseases = PlantDisease::all();
+
+        return response()->json($diseases);
+    }
+
     /**
      * Handle leaf scan and disease detection.
      *
@@ -41,11 +51,20 @@ class PlantDiseaseController extends Controller
             $disease = PlantDisease::where('slug', Str::slug($detectedDisease))->first();
 
             if ($disease) {
+
+                $history = $this->storeHistory($imagePath, $disease->id, Auth::id());
+
+                
+                
                 // If disease exists, return JSON response with disease details
                 return response()->json([
                     'success' => true,
                     'message' => 'Disease detected successfully.',
-                    'disease' => $disease
+                    'disease' => [
+                        'name' => $disease->name,
+                        'treatment' => $disease->treatment,
+                    ],
+                    'history' => $history,
                 ]);
             } else {
                 return response()->json([
@@ -60,6 +79,40 @@ class PlantDiseaseController extends Controller
                 'message' => 'Failed to process the image. Please try again.'
             ], 500);
         }
+
+
+    }
+
+    public function indexhistory(){
+    // Get the current authenticated user's ID
+    $userId = Auth::id();
+
+    // Retrieve plants based on the user_id
+    $history = History::where('user_id', $userId)->get();
+
+    // Return the plants as JSON response
+    return response()->json($history);
+    }
+
+    /**
+     * Store the result in the history table.
+     *
+     * @param string $imagePath
+     * @param int $diseaseId
+     * @param int $userId
+     * @return History
+     */
+    private function storeHistory($imagePath, $diseaseId, $userId)
+    {
+        $history = new History();
+        $history->image_path = $imagePath;
+        $history->disease_id = $diseaseId;
+        $history->user_id = $userId;
+        $history->save();
+
+        $history->load('diseases');
+
+        return $history;
     }
 
     /**

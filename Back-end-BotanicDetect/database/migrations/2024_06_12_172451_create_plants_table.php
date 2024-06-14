@@ -19,6 +19,7 @@ class CreatePlantsTable extends Migration
             $table->text('description')->nullable();
             $table->text('diseases')->nullable();
             $table->text('plantimages')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

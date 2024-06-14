@@ -11,5 +11,13 @@ class PlantDisease extends Model
 
     protected $table = 'plant_disease'; // Specify the table name
 
-    protected $fillable = ['name', 'treatment'];
+    protected $fillable = [
+        'name', 
+        'treatment'
+    ];
+
+    public function diseases()
+    {
+        return $this->hasMany(History::class, 'disease_id', 'id');
+    }
 }
