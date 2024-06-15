@@ -14,10 +14,10 @@ class PlantController extends Controller
     {
         // Get the current authenticated user's ID
         $userId = Auth::id();
-    
+
         // Retrieve plants based on the user_id
         $plants = Plant::where('user_id', $userId)->get();
-    
+
         // Return the plants as JSON response
         return response()->json($plants);
     }
@@ -30,14 +30,14 @@ class PlantController extends Controller
             'diseases' => 'nullable|string',
             'plantimages' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-    
+
         $imagesplant = null;
         if ($request->hasFile('plantimages')) {
             $image = $request->file('plantimages');
             $imagesplant = time() . '.' . $image->extension();
             $image->move(public_path('Plan Images'), $imagesplant);
         }
-    
+
         $plant = Plant::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -45,15 +45,14 @@ class PlantController extends Controller
             'plantimages' => $imagesplant,
             'user_id' => Auth::user()->id
         ]);
-    
+
         return response()->json($plant, 201);
     }
-    
-    
+
+
 
     public function update(Request $request, $id)
     {
-        
         // Validate the request
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -102,9 +101,9 @@ class PlantController extends Controller
         // Return a JSON response
         return response()->json($plant, 200);
     }
-    
-    
-        
+
+
+
     public function show(Plant $plant)
     {
         return response()->json($plant);
