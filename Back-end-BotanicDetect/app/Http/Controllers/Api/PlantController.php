@@ -33,9 +33,7 @@ class PlantController extends Controller
 
         $imagesplant = null;
         if ($request->hasFile('plantimages')) {
-            $image = $request->file('plantimages');
-            $imagesplant = time() . '.' . $image->extension();
-            $image->move(public_path('Plan Images'), $imagesplant);
+            $imagesplant = $request->file('plantimages')->store('plant-images', 'public');
         }
 
         $plant = Plant::create([
@@ -77,17 +75,14 @@ class PlantController extends Controller
         if ($request->hasFile('plantimages')) {
             // Delete the old image if it exists
             if ($plant->plantimages) {
-                $oldImagePath = public_path('Plan Images/' . $plant->plantimages);
+                $oldImagePath = storage_path('app/public/' . $plant->plantimages);
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
             }
 
             // Upload the new image
-            $image = $request->file('plantimages');
-            $imagesplant = time() . '.' . $image->extension();
-            $image->move(public_path('Plan Images'), $imagesplant);
-            $plant->plantimages = $imagesplant;
+            $plant->plantimages = $request->file('plantimages')->store('plant-images', 'public');
         }
 
         // Update plant information
