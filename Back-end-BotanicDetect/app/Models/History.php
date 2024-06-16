@@ -16,6 +16,8 @@ class History extends Model
         "disease_id",
         "image_path",
         "user_id",
+        "disease",
+        "treatment",
     ];
 
     public function users()
