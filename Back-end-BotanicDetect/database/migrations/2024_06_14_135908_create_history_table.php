@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('history', function (Blueprint $table) {
             $table->id();
             $table->foreignId('disease_id')->constrained('plant_disease')->onDelete('cascade');
+            $table->text('treatment')->nullable();
+            $table->string('disease')->nullable();
             $table->text('image_path')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
