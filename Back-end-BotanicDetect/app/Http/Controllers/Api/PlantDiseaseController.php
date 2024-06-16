@@ -52,7 +52,7 @@ class PlantDiseaseController extends Controller
 
             if ($disease) {
 
-                $history = $this->storeHistory($imagePath, $disease->id, Auth::id(), $disease->name, $disease->treatment);
+                $history = $this->storeHistory($imagePath, $disease->id, Auth::id());
 
                 
                 
@@ -60,9 +60,10 @@ class PlantDiseaseController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Disease detected successfully.',
-                    'disease' => $disease->name,
-                    'treatment' => $disease->treatment,
-                    
+                    'disease' => [
+                        'name' => $disease->name,
+                        'treatment' => $disease->treatment,
+                    ],
                     'history' => $history,
                 ]);
             } else {
@@ -93,24 +94,20 @@ class PlantDiseaseController extends Controller
     return response()->json($history);
     }
 
-/**
+    /**
      * Store the result in the history table.
      *
      * @param string $imagePath
      * @param int $diseaseId
      * @param int $userId
-     * @param string $diseaseName
-     * @param string $treatment
      * @return History
      */
-    private function storeHistory($imagePath, $diseaseId, $userId, $diseaseName, $treatment)
+    private function storeHistory($imagePath, $diseaseId, $userId)
     {
         $history = new History();
         $history->image_path = $imagePath;
         $history->disease_id = $diseaseId;
         $history->user_id = $userId;
-        $history->disease = $diseaseName;
-        $history->treatment = $treatment;
         $history->save();
 
         $history->load('diseases');
