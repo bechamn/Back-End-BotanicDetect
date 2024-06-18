@@ -54,8 +54,8 @@ class PlantDiseaseController extends Controller
 
                 $history = $this->storeHistory($imagePath, $disease->id, Auth::id(), $disease->name, $disease->treatment);
 
-                
-                
+
+
                 // If disease exists, return JSON response with disease details
                 return response()->json([
                     'success' => true,
@@ -134,7 +134,7 @@ class PlantDiseaseController extends Controller
         $escImageFullPath = escapeshellarg($imageFullPath);
 
         // $command = escapeshellcmd("py $pythonScriptPath $imageFullPath");
-        $output = shell_exec("python {$escScriptPath} {$escImageFullPath}");
+        $output = shell_exec("python3 {$escScriptPath} {$escImageFullPath}");
 
         $result = json_decode($output, true);
 
@@ -142,6 +142,10 @@ class PlantDiseaseController extends Controller
             return $result['predicted_class'];
         }
 
-        return null;
+        return response()->json([
+            'status' => 'error',
+            'message' => 'error occured',
+            'details' => $output
+        ], 500);
     }
 }
