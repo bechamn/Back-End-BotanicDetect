@@ -44,10 +44,6 @@ class PlantDiseaseController extends Controller
 
         // Call your TensorFlow Lite model to process the image
         $detectedDisease = $this->analyzeImage($imagePath);
-
-        if ($detectedDisease instanceof \Illuminate\Http\JsonResponse) {
-            return $detectedDisease;
-        }
         // return $detectedDisease;
 
         if ($detectedDisease) {
@@ -138,30 +134,14 @@ class PlantDiseaseController extends Controller
         $escImageFullPath = escapeshellarg($imageFullPath);
 
         // $command = escapeshellcmd("py $pythonScriptPath $imageFullPath");
-        $output = shell_exec("python3 {$escScriptPath} {$escImageFullPath}");
+        $output = shell_exec("python {$escScriptPath} {$escImageFullPath}");
 
         $result = json_decode($output, true);
-
-        if (json_last_error() === JSON_ERROR_NONE)
-        {
-            if (isset($result['status']) && $result['status'] === 'error')
-            {
-                return response()->json([
-                    'success' => false,
-                    'message' => $result['message'],
-                    'details' => $result['details']
-                ], 500);
-            }
-        }
 
         if (json_last_error() === JSON_ERROR_NONE && isset($result['predicted_class'])) {
             return $result['predicted_class'];
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => 'error occured',
-            'details' => $output
-        ], 500);
+        return null;
     }
 }

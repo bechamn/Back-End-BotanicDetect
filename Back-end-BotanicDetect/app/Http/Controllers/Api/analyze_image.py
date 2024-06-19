@@ -33,18 +33,8 @@ def classify_image_tflite(interpreter, image_path, class_labels):
     return predicted_class, confidence
 
 if __name__ == '__main__':
-    try:
-        model_path = r"model\tf_lite_Optimize_DEFAULT_model.tflite"
-        interpreter = tf.lite.Interpreter(model_path=os.path.abspath(model_path))
-    except Exception as e:
-        error_msg = {
-            "status": "error",
-            'message': "error loading the model",
-            'error': str(e)
-        }
-        print(json.dumps(error_msg))
-        sys.exit(1)
-
+    model_path = r"model\tf_lite_Optimize_DEFAULT_model.tflite"
+    interpreter = tf.lite.Interpreter(model_path=os.path.abspath(model_path))
     interpreter.allocate_tensors()
 
     class_labels = [
