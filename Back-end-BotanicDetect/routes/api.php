@@ -39,4 +39,7 @@ Route::middleware('auth:sanctum')->group( function () {
     //history
     Route::get('/history', [PlantDiseaseController::class, 'indexhistory']);
     Route::post('/history', [PlantDiseaseController::class, 'indexhistory']);
+
+    //logout
+    Route::post('/logout', [UserController::class, 'logout']);
 });
